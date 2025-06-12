@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Horária Escolar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .grade-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .disciplina {
+            font-weight: bold;
+        }
+        .professor {
+            font-size: 0.8em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="cabecalho">
+        <h1>ESCOLA ESTADUAL ENSINO FUNDAMENTAL</h1>
+        <h2>Grade Horária - 2024</h2>
+        <h3>Turma: 8º Ano A - Período: Matutino</h3>
+    </div>
+
+    <div class="grade-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Horário</th>
+                    <th>Segunda</th>
+                    <th>Terça</th>
+                    <th>Quarta</th>
+                    <th>Quinta</th>
+                    <th>Sexta</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>07:30 - 08:20</td>
+                    <td>
+                        <span class="disciplina">Matemática</span><br>
+                        <span class="professor">Prof. Carlos</span>
+                    </td>
+                    <td>
+                        <span class="disciplina">Português</span><br>
+                        <span class="professor">Prof. Ana</span>
+                    </td>
+                    <td>
+                        <span class="disciplina">Ciências</span><br>
+                        <span class="professor">Prof. Mariana</span>
+                    </td>
+                    <td>
+                        <span class="disciplina">Matemática</span><br>
+                        <span class="professor">Prof. Carlos</span>
+                    </td>
+                    <td>
+                        <span class="disciplina">História</span><br>
+                        <span class="professor">Prof. João</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>08:20 - 09:10</td>
+                    <td>Português</td>
+                    <td>Matemática</td>
+                    <td>Geografia</td>
+                    <td>Inglês</td>
+                    <td>Educação Física</td>
+                </tr>
+                <tr>
+                    <td>09:10 - 10:00</td>
+                    <td>Ciências</td>
+                    <td>História</td>
+                    <td>Matemática</td>
+                    <td>Artes</td>
+                    <td>Português</td>
+                </tr>
+                <tr>
+                    <td colspan="6" style="text-align: center; background-color: #f2f2f2;">Intervalo</td>
+                </tr>
+                <tr>
+                    <td>10:20 - 11:10</td>
+                    <td>Geografia</td>
+                    <td>Educação Física</td>
+                    <td>Português</td>
+                    <td>Ciências</td>
+                    <td>Matemática</td>
+                </tr>
+                <tr>
+                    <td>11:10 - 12:00</td>
+                    <td>História</td>
+                    <td>Ciências</td>
+                    <td>Inglês</td>
+                    <td>Português</td>
+                    <td>Geografia</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
