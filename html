@@ -1,125 +1,640 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade Horária Escolar</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .grade-container {
-            width: 100%;
-            overflow-x: auto;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        .cabecalho {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .disciplina {
-            font-weight: bold;
-        }
-        .professor {
-            font-size: 0.8em;
-            color: #555;
-        }
-    </style>
-</head>
-<body>
-    <div class="cabecalho">
-        <h1>ESCOLA ESTADUAL ENSINO FUNDAMENTAL</h1>
-        <h2>Grade Horária - 2024</h2>
-        <h3>Turma: 8º Ano A - Período: Matutino</h3>
-    </div>
+import tkinter as tk
+from tkinter import ttk, messagebox
+import csv
+from datetime import datetime
+import os
 
-    <div class="grade-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Horário</th>
-                    <th>Segunda</th>
-                    <th>Terça</th>
-                    <th>Quarta</th>
-                    <th>Quinta</th>
-                    <th>Sexta</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>07:30 - 08:20</td>
-                    <td>
-                        <span class="disciplina">Matemática</span><br>
-                        <span class="professor">Prof. Carlos</span>
-                    </td>
-                    <td>
-                        <span class="disciplina">Português</span><br>
-                        <span class="professor">Prof. Ana</span>
-                    </td>
-                    <td>
-                        <span class="disciplina">Ciências</span><br>
-                        <span class="professor">Prof. Mariana</span>
-                    </td>
-                    <td>
-                        <span class="disciplina">Matemática</span><br>
-                        <span class="professor">Prof. Carlos</span>
-                    </td>
-                    <td>
-                        <span class="disciplina">História</span><br>
-                        <span class="professor">Prof. João</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>08:20 - 09:10</td>
-                    <td>Português</td>
-                    <td>Matemática</td>
-                    <td>Geografia</td>
-                    <td>Inglês</td>
-                    <td>Educação Física</td>
-                </tr>
-                <tr>
-                    <td>09:10 - 10:00</td>
-                    <td>Ciências</td>
-                    <td>História</td>
-                    <td>Matemática</td>
-                    <td>Artes</td>
-                    <td>Português</td>
-                </tr>
-                <tr>
-                    <td colspan="6" style="text-align: center; background-color: #f2f2f2;">Intervalo</td>
-                </tr>
-                <tr>
-                    <td>10:20 - 11:10</td>
-                    <td>Geografia</td>
-                    <td>Educação Física</td>
-                    <td>Português</td>
-                    <td>Ciências</td>
-                    <td>Matemática</td>
-                </tr>
-                <tr>
-                    <td>11:10 - 12:00</td>
-                    <td>História</td>
-                    <td>Ciências</td>
-                    <td>Inglês</td>
-                    <td>Português</td>
-                    <td>Geografia</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</body>
-</html>
+class CronogramaEscolar:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Sistema de Cronograma Escolar")
+        self.root.geometry("1000x600")
+        
+        # Dados iniciais
+        self.professores = []
+        self.disciplinas = []
+        self.turmas = []
+        self.aulas = []
+        self.ausencias = []
+        self.substituicoes = []
+        
+        # Carregar dados salvos
+        self.carregar_dados()
+        
+        # Criar abas
+        self.notebook = ttk.Notebook(root)
+        self.notebook.pack(fill='both', expand=True)
+        
+        # Aba de Professores
+        self.criar_aba_professores()
+        
+        # Aba de Disciplinas
+        self.criar_aba_disciplinas()
+        
+        # Aba de Turmas
+        self.criar_aba_turmas()
+        
+        # Aba de Aulas
+        self.criar_aba_aulas()
+        
+        # Aba de Presença/Ausência
+        self.criar_aba_presenca()
+        
+        # Aba de Substituições
+        self.criar_aba_substituicoes()
+        
+        # Aba de Relatórios
+        self.criar_aba_relatorios()
+    
+    def carregar_dados(self):
+        # Carregar professores
+        if os.path.exists('professores.csv'):
+            with open('professores.csv', 'r', newline='', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                self.professores = list(reader)
+        
+        # Carregar disciplinas
+        if os.path.exists('disciplinas.csv'):
+            with open('disciplinas.csv', 'r', newline='', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                self.disciplinas = list(reader)
+        
+        # Carregar turmas
+        if os.path.exists('turmas.csv'):
+            with open('turmas.csv', 'r', newline='', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                self.turmas = list(reader)
+        
+        # Carregar aulas
+        if os.path.exists('aulas.csv'):
+            with open('aulas.csv', 'r', newline='', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                self.aulas = list(reader)
+        
+        # Carregar ausências
+        if os.path.exists('ausencias.csv'):
+            with open('ausencias.csv', 'r', newline='', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                self.ausencias = list(reader)
+        
+        # Carregar substituições
+        if os.path.exists('substituicoes.csv'):
+            with open('substituicoes.csv', 'r', newline='', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                self.substituicoes = list(reader)
+    
+    def salvar_dados(self):
+        # Salvar professores
+        with open('professores.csv', 'w', newline='', encoding='utf-8') as f:
+            if self.professores:
+                writer = csv.DictWriter(f, fieldnames=self.professores[0].keys())
+                writer.writeheader()
+                writer.writerows(self.professores)
+        
+        # Salvar disciplinas
+        with open('disciplinas.csv', 'w', newline='', encoding='utf-8') as f:
+            if self.disciplinas:
+                writer = csv.DictWriter(f, fieldnames=self.disciplinas[0].keys())
+                writer.writeheader()
+                writer.writerows(self.disciplinas)
+        
+        # Salvar turmas
+        with open('turmas.csv', 'w', newline='', encoding='utf-8') as f:
+            if self.turmas:
+                writer = csv.DictWriter(f, fieldnames=self.turmas[0].keys())
+                writer.writeheader()
+                writer.writerows(self.turmas)
+        
+        # Salvar aulas
+        with open('aulas.csv', 'w', newline='', encoding='utf-8') as f:
+            if self.aulas:
+                writer = csv.DictWriter(f, fieldnames=self.aulas[0].keys())
+                writer.writeheader()
+                writer.writerows(self.aulas)
+        
+        # Salvar ausências
+        with open('ausencias.csv', 'w', newline='', encoding='utf-8') as f:
+            if self.ausencias:
+                writer = csv.DictWriter(f, fieldnames=self.ausencias[0].keys())
+                writer.writeheader()
+                writer.writerows(self.ausencias)
+        
+        # Salvar substituições
+        with open('substituicoes.csv', 'w', newline='', encoding='utf-8') as f:
+            if self.substituicoes:
+                writer = csv.DictWriter(f, fieldnames=self.substituicoes[0].keys())
+                writer.writeheader()
+                writer.writerows(self.substituicoes)
+    
+    def criar_aba_professores(self):
+        frame = ttk.Frame(self.notebook)
+        self.notebook.add(frame, text='Professores')
+        
+        # Treeview para exibir professores
+        columns = ('id', 'nome', 'email', 'telefone', 'disciplinas')
+        self.prof_tree = ttk.Treeview(frame, columns=columns, show='headings')
+        
+        for col in columns:
+            self.prof_tree.heading(col, text=col.capitalize())
+            self.prof_tree.column(col, width=100)
+        
+        self.prof_tree.pack(fill='both', expand=True, padx=5, pady=5)
+        
+        # Frame para controles
+        ctrl_frame = ttk.Frame(frame)
+        ctrl_frame.pack(fill='x', padx=5, pady=5)
+        
+        # Campos de entrada
+        ttk.Label(ctrl_frame, text='Nome:').grid(row=0, column=0, padx=2)
+        self.prof_nome = ttk.Entry(ctrl_frame)
+        self.prof_nome.grid(row=0, column=1, padx=2)
+        
+        ttk.Label(ctrl_frame, text='Email:').grid(row=0, column=2, padx=2)
+        self.prof_email = ttk.Entry(ctrl_frame)
+        self.prof_email.grid(row=0, column=3, padx=2)
+        
+        ttk.Label(ctrl_frame, text='Telefone:').grid(row=0, column=4, padx=2)
+        self.prof_telefone = ttk.Entry(ctrl_frame)
+        self.prof_telefone.grid(row=0, column=5, padx=2)
+        
+        ttk.Label(ctrl_frame, text='Disciplinas:').grid(row=1, column=0, padx=2)
+        self.prof_disciplinas = ttk.Entry(ctrl_frame)
+        self.prof_disciplinas.grid(row=1, column=1, columnspan=3, padx=2, sticky='we')
+        
+        # Botões
+        btn_frame = ttk.Frame(ctrl_frame)
+        btn_frame.grid(row=2, column=0, columnspan=6, pady=5)
+        
+        ttk.Button(btn_frame, text='Adicionar', command=self.adicionar_professor).pack(side='left', padx=2)
+        ttk.Button(btn_frame, text='Editar', command=self.editar_professor).pack(side='left', padx=2)
+        ttk.Button(btn_frame, text='Remover', command=self.remover_professor).pack(side='left', padx=2)
+        
+        # Carregar dados na treeview
+        self.atualizar_tree_professores()
+    
+    def atualizar_tree_professores(self):
+        for item in self.prof_tree.get_children():
+            self.prof_tree.delete(item)
+        
+        for prof in self.professores:
+            self.prof_tree.insert('', 'end', values=(
+                prof.get('id', ''),
+                prof.get('nome', ''),
+                prof.get('email', ''),
+                prof.get('telefone', ''),
+                prof.get('disciplinas', '')
+            ))
+    
+    def adicionar_professor(self):
+        nome = self.prof_nome.get()
+        email = self.prof_email.get()
+        telefone = self.prof_telefone.get()
+        disciplinas = self.prof_disciplinas.get()
+        
+        if not nome:
+            messagebox.showerror('Erro', 'Nome é obrigatório')
+            return
+        
+        novo_id = str(max([int(p.get('id', 0)) for p in self.professores] + [0]) + 1)
+        
+        novo_prof = {
+            'id': novo_id,
+            'nome': nome,
+            'email': email,
+            'telefone': telefone,
+            'disciplinas': disciplinas
+        }
+        
+        self.professores.append(novo_prof)
+        self.atualizar_tree_professores()
+        self.salvar_dados()
+        
+        # Limpar campos
+        self.prof_nome.delete(0, 'end')
+        self.prof_email.delete(0, 'end')
+        self.prof_telefone.delete(0, 'end')
+        self.prof_disciplinas.delete(0, 'end')
+    
+    def editar_professor(self):
+        selected = self.prof_tree.selection()
+        if not selected:
+            messagebox.showerror('Erro', 'Selecione um professor para editar')
+            return
+        
+        item = self.prof_tree.item(selected[0])
+        prof_id = item['values'][0]
+        
+        # Encontrar professor
+        prof = next((p for p in self.professores if p['id'] == prof_id), None)
+        if not prof:
+            messagebox.showerror('Erro', 'Professor não encontrado')
+            return
+        
+        # Atualizar dados
+        prof['nome'] = self.prof_nome.get() or prof['nome']
+        prof['email'] = self.prof_email.get() or prof['email']
+        prof['telefone'] = self.prof_telefone.get() or prof['telefone']
+        prof['disciplinas'] = self.prof_disciplinas.get() or prof['disciplinas']
+        
+        self.atualizar_tree_professores()
+        self.salvar_dados()
+        
+        # Limpar campos
+        self.prof_nome.delete(0, 'end')
+        self.prof_email.delete(0, 'end')
+        self.prof_telefone.delete(0, 'end')
+        self.prof_disciplinas.delete(0, 'end')
+    
+    def remover_professor(self):
+        selected = self.prof_tree.selection()
+        if not selected:
+            messagebox.showerror('Erro', 'Selecione um professor para remover')
+            return
+        
+        item = self.prof_tree.item(selected[0])
+        prof_id = item['values'][0]
+        
+        # Confirmar remoção
+        if not messagebox.askyesno('Confirmar', 'Tem certeza que deseja remover este professor?'):
+            return
+        
+        # Remover professor
+        self.professores = [p for p in self.professores if p['id'] != prof_id]
+        self.atualizar_tree_professores()
+        self.salvar_dados()
+    
+    # Métodos similares para outras abas (disciplinas, turmas, aulas, etc.)
+    def criar_aba_disciplinas(self):
+        # Implementação similar à aba de professores
+        pass
+    
+    def criar_aba_turmas(self):
+        # Implementação similar à aba de professores
+        pass
+    
+    def criar_aba_aulas(self):
+        frame = ttk.Frame(self.notebook)
+        self.notebook.add(frame, text='Aulas')
+        
+        # Treeview para exibir aulas
+        columns = ('id', 'disciplina', 'turma', 'professor', 'dia', 'horario', 'sala')
+        self.aulas_tree = ttk.Treeview(frame, columns=columns, show='headings')
+        
+        for col in columns:
+            self.aulas_tree.heading(col, text=col.capitalize())
+            self.aulas_tree.column(col, width=100)
+        
+        self.aulas_tree.pack(fill='both', expand=True, padx=5, pady=5)
+        
+        # Frame para controles
+        ctrl_frame = ttk.Frame(frame)
+        ctrl_frame.pack(fill='x', padx=5, pady=5)
+        
+        # Combobox para disciplinas
+        ttk.Label(ctrl_frame, text='Disciplina:').grid(row=0, column=0, padx=2)
+        self.aula_disciplina = ttk.Combobox(ctrl_frame, values=[d['nome'] for d in self.disciplinas])
+        self.aula_disciplina.grid(row=0, column=1, padx=2)
+        
+        # Combobox para turmas
+        ttk.Label(ctrl_frame, text='Turma:').grid(row=0, column=2, padx=2)
+        self.aula_turma = ttk.Combobox(ctrl_frame, values=[t['nome'] for t in self.turmas])
+        self.aula_turma.grid(row=0, column=3, padx=2)
+        
+        # Combobox para professores
+        ttk.Label(ctrl_frame, text='Professor:').grid(row=0, column=4, padx=2)
+        self.aula_professor = ttk.Combobox(ctrl_frame, values=[p['nome'] for p in self.professores])
+        self.aula_professor.grid(row=0, column=5, padx=2)
+        
+        # Dia da semana
+        ttk.Label(ctrl_frame, text='Dia:').grid(row=1, column=0, padx=2)
+        self.aula_dia = ttk.Combobox(ctrl_frame, values=['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'])
+        self.aula_dia.grid(row=1, column=1, padx=2)
+        
+        # Horário
+        ttk.Label(ctrl_frame, text='Horário:').grid(row=1, column=2, padx=2)
+        self.aula_horario = ttk.Entry(ctrl_frame)
+        self.aula_horario.grid(row=1, column=3, padx=2)
+        
+        # Sala
+        ttk.Label(ctrl_frame, text='Sala:').grid(row=1, column=4, padx=2)
+        self.aula_sala = ttk.Entry(ctrl_frame)
+        self.aula_sala.grid(row=1, column=5, padx=2)
+        
+        # Botões
+        btn_frame = ttk.Frame(ctrl_frame)
+        btn_frame.grid(row=2, column=0, columnspan=6, pady=5)
+        
+        ttk.Button(btn_frame, text='Adicionar', command=self.adicionar_aula).pack(side='left', padx=2)
+        ttk.Button(btn_frame, text='Editar', command=self.editar_aula).pack(side='left', padx=2)
+        ttk.Button(btn_frame, text='Remover', command=self.remover_aula).pack(side='left', padx=2)
+        
+        # Carregar dados na treeview
+        self.atualizar_tree_aulas()
+    
+    def adicionar_aula(self):
+        disciplina = self.aula_disciplina.get()
+        turma = self.aula_turma.get()
+        professor = self.aula_professor.get()
+        dia = self.aula_dia.get()
+        horario = self.aula_horario.get()
+        sala = self.aula_sala.get()
+        
+        if not all([disciplina, turma, professor, dia, horario]):
+            messagebox.showerror('Erro', 'Preencha todos os campos obrigatórios')
+            return
+        
+        novo_id = str(max([int(a.get('id', 0)) for a in self.aulas] + [0]) + 1)
+        
+        nova_aula = {
+            'id': novo_id,
+            'disciplina': disciplina,
+            'turma': turma,
+            'professor': professor,
+            'dia': dia,
+            'horario': horario,
+            'sala': sala
+        }
+        
+        self.aulas.append(nova_aula)
+        self.atualizar_tree_aulas()
+        self.salvar_dados()
+        
+        # Limpar campos
+        self.aula_disciplina.set('')
+        self.aula_turma.set('')
+        self.aula_professor.set('')
+        self.aula_dia.set('')
+        self.aula_horario.delete(0, 'end')
+        self.aula_sala.delete(0, 'end')
+    
+    def atualizar_tree_aulas(self):
+        for item in self.aulas_tree.get_children():
+            self.aulas_tree.delete(item)
+        
+        for aula in self.aulas:
+            self.aulas_tree.insert('', 'end', values=(
+                aula.get('id', ''),
+                aula.get('disciplina', ''),
+                aula.get('turma', ''),
+                aula.get('professor', ''),
+                aula.get('dia', ''),
+                aula.get('horario', ''),
+                aula.get('sala', '')
+            ))
+    
+    def criar_aba_presenca(self):
+        frame = ttk.Frame(self.notebook)
+        self.notebook.add(frame, text='Presença/Ausência')
+        
+        # Treeview para exibir ausências
+        columns = ('id', 'professor', 'data', 'motivo', 'aulas_afetadas')
+        self.ausencias_tree = ttk.Treeview(frame, columns=columns, show='headings')
+        
+        for col in columns:
+            self.ausencias_tree.heading(col, text=col.capitalize())
+            self.ausencias_tree.column(col, width=100)
+        
+        self.ausencias_tree.pack(fill='both', expand=True, padx=5, pady=5)
+        
+        # Frame para controles
+        ctrl_frame = ttk.Frame(frame)
+        ctrl_frame.pack(fill='x', padx=5, pady=5)
+        
+        # Combobox para professores
+        ttk.Label(ctrl_frame, text='Professor:').grid(row=0, column=0, padx=2)
+        self.ausencia_professor = ttk.Combobox(ctrl_frame, values=[p['nome'] for p in self.professores])
+        self.ausencia_professor.grid(row=0, column=1, padx=2)
+        
+        # Data
+        ttk.Label(ctrl_frame, text='Data:').grid(row=0, column=2, padx=2)
+        self.ausencia_data = ttk.Entry(ctrl_frame)
+        self.ausencia_data.grid(row=0, column=3, padx=2)
+        self.ausencia_data.insert(0, datetime.now().strftime('%d/%m/%Y'))
+        
+        # Motivo
+        ttk.Label(ctrl_frame, text='Motivo:').grid(row=0, column=4, padx=2)
+        self.ausencia_motivo = ttk.Combobox(ctrl_frame, values=['Doença', 'Licença', 'Outro'])
+        self.ausencia_motivo.grid(row=0, column=5, padx=2)
+        
+        # Botões
+        btn_frame = ttk.Frame(ctrl_frame)
+        btn_frame.grid(row=1, column=0, columnspan=6, pady=5)
+        
+        ttk.Button(btn_frame, text='Registrar Ausência', command=self.registrar_ausencia).pack(side='left', padx=2)
+        ttk.Button(btn_frame, text='Sugerir Substituição', command=self.sugerir_substituicao).pack(side='left', padx=2)
+        
+        # Carregar dados na treeview
+        self.atualizar_tree_ausencias()
+    
+    def registrar_ausencia(self):
+        professor = self.ausencia_professor.get()
+        data = self.ausencia_data.get()
+        motivo = self.ausencia_motivo.get()
+        
+        if not all([professor, data, motivo]):
+            messagebox.showerror('Erro', 'Preencha todos os campos obrigatórios')
+            return
+        
+        # Verificar se a data é válida
+        try:
+            datetime.strptime(data, '%d/%m/%Y')
+        except ValueError:
+            messagebox.showerror('Erro', 'Data inválida. Use o formato DD/MM/AAAA')
+            return
+        
+        # Encontrar aulas afetadas
+        aulas_afetadas = [a for a in self.aulas if a['professor'] == professor]
+        
+        novo_id = str(max([int(a.get('id', 0)) for a in self.ausencias] + [0]) + 1)
+        
+        nova_ausencia = {
+            'id': novo_id,
+            'professor': professor,
+            'data': data,
+            'motivo': motivo,
+            'aulas_afetadas': str(len(aulas_afetadas))
+        }
+        
+        self.ausencias.append(nova_ausencia)
+        self.atualizar_tree_ausencias()
+        self.salvar_dados()
+        
+        # Limpar campos
+        self.ausencia_professor.set('')
+        self.ausencia_motivo.set('')
+    
+    def sugerir_substituicao(self):
+        selected = self.ausencias_tree.selection()
+        if not selected:
+            messagebox.showerror('Erro', 'Selecione uma ausência para sugerir substituição')
+            return
+        
+        item = self.ausencias_tree.item(selected[0])
+        ausencia_id = item['values'][0]
+        
+        # Encontrar ausência
+        ausencia = next((a for a in self.ausencias if a['id'] == ausencia_id), None)
+        if not ausencia:
+            messagebox.showerror('Erro', 'Ausência não encontrada')
+            return
+        
+        professor_ausente = ausencia['professor']
+        data_ausencia = ausencia['data']
+        
+        # Encontrar aulas afetadas
+        aulas_afetadas = [a for a in self.aulas if a['professor'] == professor_ausente]
+        
+        if not aulas_afetadas:
+            messagebox.showinfo('Info', 'Nenhuma aula afetada por esta ausência')
+            return
+        
+        # Encontrar professores que podem substituir (mesma disciplina)
+        disciplinas_afetadas = list(set([a['disciplina'] for a in aulas_afetadas]))
+        
+        substitutos = []
+        for prof in self.professores:
+            prof_disciplinas = prof.get('disciplinas', '').split(',')
+            for disc in disciplinas_afetadas:
+                if disc.strip() in [d.strip() for d in prof_disciplinas] and prof['nome'] != professor_ausente:
+                    substitutos.append(prof['nome'])
+                    break
+        
+        if not substitutos:
+            messagebox.showinfo('Info', 'Nenhum professor disponível para substituição')
+            return
+        
+        # Mostrar diálogo de substituição
+        self.mostrar_dialogo_substituicao(professor_ausente, data_ausencia, aulas_afetadas, substitutos)
+    
+    def mostrar_dialogo_substituicao(self, professor_ausente, data_ausencia, aulas_afetadas, substitutos):
+        dialog = tk.Toplevel(self.root)
+        dialog.title('Registrar Substituição')
+        dialog.geometry('600x400')
+        
+        # Frame principal
+        main_frame = ttk.Frame(dialog)
+        main_frame.pack(fill='both', expand=True, padx=10, pady=10)
+        
+        # Informações da ausência
+        ttk.Label(main_frame, text=f'Professor ausente: {professor_ausente}').pack(anchor='w')
+        ttk.Label(main_frame, text=f'Data: {data_ausencia}').pack(anchor='w')
+        
+        # Aulas afetadas
+        ttk.Label(main_frame, text='Aulas afetadas:').pack(anchor='w', pady=(10,0))
+        
+        aulas_frame = ttk.Frame(main_frame)
+        aulas_frame.pack(fill='x', padx=5, pady=5)
+        
+        for aula in aulas_afetadas:
+            ttk.Label(aulas_frame, 
+                     text=f"{aula['disciplina']} - {aula['turma']} - {aula['dia']} {aula['horario']}").pack(anchor='w')
+        
+        # Selecionar substituto
+        ttk.Label(main_frame, text='Substituto:').pack(anchor='w', pady=(10,0))
+        substituto_var = tk.StringVar()
+        substituto_cb = ttk.Combobox(main_frame, textvariable=substituto_var, values=substitutos)
+        substituto_cb.pack(fill='x', padx=5, pady=5)
+        
+        # Botões
+        btn_frame = ttk.Frame(main_frame)
+        btn_frame.pack(fill='x', pady=10)
+        
+        ttk.Button(btn_frame, text='Cancelar', command=dialog.destroy).pack(side='right', padx=5)
+        ttk.Button(btn_frame, text='Confirmar', 
+                  command=lambda: self.registrar_substituicao(
+                      professor_ausente, data_ausencia, aulas_afetadas, substituto_var.get(), dialog
+                  )).pack(side='right', padx=5)
+    
+    def registrar_substituicao(self, professor_ausente, data_ausencia, aulas_afetadas, substituto, dialog):
+        if not substituto:
+            messagebox.showerror('Erro', 'Selecione um substituto')
+            return
+        
+        novo_id = str(max([int(s.get('id', 0)) for s in self.substituicoes] + [0]) + 1)
+        
+        nova_substituicao = {
+            'id': novo_id,
+            'professor_ausente': professor_ausente,
+            'substituto': substituto,
+            'data': data_ausencia,
+            'aulas': str(len(aulas_afetadas))
+        }
+        
+        self.substituicoes.append(nova_substituicao)
+        self.salvar_dados()
+        
+        messagebox.showinfo('Sucesso', 'Substituição registrada com sucesso')
+        dialog.destroy()
+    
+    def criar_aba_substituicoes(self):
+        frame = ttk.Frame(self.notebook)
+        self.notebook.add(frame, text='Substituições')
+        
+        # Treeview para exibir substituições
+        columns = ('id', 'professor_ausente', 'substituto', 'data', 'aulas')
+        self.subst_tree = ttk.Treeview(frame, columns=columns, show='headings')
+        
+        for col in columns:
+            self.subst_tree.heading(col, text=col.capitalize())
+            self.subst_tree.column(col, width=120)
+        
+        self.subst_tree.pack(fill='both', expand=True, padx=5, pady=5)
+        
+        # Carregar dados na treeview
+        self.atualizar_tree_substituicoes()
+    
+    def atualizar_tree_substituicoes(self):
+        for item in self.subst_tree.get_children():
+            self.subst_tree.delete(item)
+        
+        for subst in self.substituicoes:
+            self.subst_tree.insert('', 'end', values=(
+                subst.get('id', ''),
+                subst.get('professor_ausente', ''),
+                subst.get('substituto', ''),
+                subst.get('data', ''),
+                subst.get('aulas', '')
+            ))
+    
+    def criar_aba_relatorios(self):
+        frame = ttk.Frame(self.notebook)
+        self.notebook.add(frame, text='Relatórios')
+        
+        # Botões para diferentes relatórios
+        ttk.Button(frame, text='Relatório de Ausências', 
+                  command=self.gerar_relatorio_ausencias).pack(pady=5, padx=10, fill='x')
+        
+        ttk.Button(frame, text='Relatório de Substituições', 
+                  command=self.gerar_relatorio_substituicoes).pack(pady=5, padx=10, fill='x')
+        
+        ttk.Button(frame, text='Cronograma de Professores', 
+                  command=self.gerar_cronograma_professores).pack(pady=5, padx=10, fill='x')
+        
+        ttk.Button(frame, text='Aulas por Turma', 
+                  command=self.gerar_aulas_turma).pack(pady=5, padx=10, fill='x')
+    
+    def gerar_relatorio_ausencias(self):
+        # Implementar geração de relatório de ausências
+        messagebox.showinfo('Info', 'Relatório de ausências gerado')
+    
+    def gerar_relatorio_substituicoes(self):
+        # Implementar geração de relatório de substituições
+        messagebox.showinfo('Info', 'Relatório de substituições gerado')
+    
+    def gerar_cronograma_professores(self):
+        # Implementar geração de cronograma por professor
+        messagebox.showinfo('Info', 'Cronograma de professores gerado')
+    
+    def gerar_aulas_turma(self):
+        # Implementar geração de aulas por turma
+        messagebox.showinfo('Info', 'Relatório de aulas por turma gerado')
+    
+    def on_closing(self):
+        self.salvar_dados()
+        self.root.destroy()
+
+if __name__ == '__main__':
+    root = tk.Tk()
+    app = CronogramaEscolar(root)
+    root.protocol('WM_DELETE_WINDOW', app.on_closing)
+    root.mainloop()
